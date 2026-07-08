@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  --color-linen: #FDFBF7;
+  --color-wood: #4A3728;
+  --color-wood-light: #6B4E3D;
+  --color-wood-dark: #2E1F14;
+  --color-emerald: #2D6A4F;
+  --color-emerald-light: #40916C;
+  --color-gold: #C9A96E;
+  --color-gold-light: #DFC08A;
+  --color-stone: #E9E5DE;
+  --color-broken-white: #F7F6F2;
+  --color-charcoal: #1C1C1C;
+
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: var(--color-linen);
+    color: var(--color-charcoal);
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-playfair);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  code, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .text-linen { color: var(--color-linen); }
+  .text-wood { color: var(--color-wood); }
+  .text-emerald-custom { color: var(--color-emerald); }
+  .text-gold { color: var(--color-gold); }
+  .text-stone { color: var(--color-stone); }
+  .text-charcoal { color: var(--color-charcoal); }
+
+  .bg-linen { background-color: var(--color-linen); }
+  .bg-wood { background-color: var(--color-wood); }
+  .bg-wood-dark { background-color: var(--color-wood-dark); }
+  .bg-emerald-custom { background-color: var(--color-emerald); }
+  .bg-gold { background-color: var(--color-gold); }
+  .bg-stone { background-color: var(--color-stone); }
+  .bg-broken-white { background-color: var(--color-broken-white); }
+  .bg-charcoal { background-color: var(--color-charcoal); }
+
+  .border-wood { border-color: var(--color-wood); }
+  .border-gold { border-color: var(--color-gold); }
+  .border-stone { border-color: var(--color-stone); }
+
+  .font-playfair { font-family: var(--font-playfair); }
+  .font-inter { font-family: var(--font-inter); }
+  .font-jetbrains { font-family: var(--font-mono); }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background-color: var(--color-wood);
+    color: var(--color-linen);
+    font-family: var(--font-inter);
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border: 1px solid var(--color-wood);
+    text-transform: uppercase;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-wood-dark);
+    box-shadow: 4px 4px 0px var(--color-gold);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background-color: transparent;
+    color: var(--color-wood);
+    font-family: var(--font-inter);
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border: 1px solid var(--color-wood);
+    text-transform: uppercase;
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-wood);
+    color: var(--color-linen);
+    box-shadow: 4px 4px 0px var(--color-gold);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background-color: var(--color-gold);
+    color: var(--color-wood-dark);
+    font-family: var(--font-inter);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border: 1px solid var(--color-gold);
+    text-transform: uppercase;
+  }
+  .btn-gold:hover {
+    background-color: var(--color-gold-light);
+    box-shadow: 4px 4px 0px var(--color-wood);
+    transform: translate(-2px, -2px);
+  }
+
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .wood-line {
+    width: 3rem;
+    height: 2px;
+    background-color: var(--color-gold);
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .grain-texture {
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(74, 55, 40, 0.03) 2px,
+        rgba(74, 55, 40, 0.03) 4px
+      );
+  }
+}
