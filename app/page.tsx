@@ -74,11 +74,11 @@ function HeroSection() {
               color: "var(--color-linen)",
             }}
           >
-            Keahlian Tukang Kayu,{" "}
-            <em className="not-italic" style={{ color: "var(--color-gold)" }}>
-              Visi Desainer
+            Wujudkan{" "}
+            <em className="italic" style={{ color: "var(--color-gold)" }}>
+              Furniture yang Tepat
             </em>{" "}
-            Anda
+            untuk Setiap Ruangan
           </motion.h1>
 
           {/* Subheadline */}

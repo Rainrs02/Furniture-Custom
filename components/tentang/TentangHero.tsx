@@ -33,13 +33,13 @@ export default function TentangHero() {
             </span>
           </div>
           <h1
-            className="text-5xl md:text-7xl font-bold max-w-3xl leading-tight"
+            className="text-4xl md:text-6xl font-bold max-w-4xl leading-tight"
             style={{ fontFamily: "var(--font-playfair)", color: "var(--color-linen)" }}
           >
-            Dibangun di Atas{" "}
             <em className="italic" style={{ color: "var(--color-gold)" }}>
-              Keahlian &amp; Integritas
-            </em>
+              Custom Furniture Berkualitas
+            </em>{" "}
+            untuk Rumah dan Bisnis
           </h1>
           <p
             className="mt-6 text-lg max-w-2xl opacity-75"
