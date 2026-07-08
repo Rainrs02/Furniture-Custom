@@ -118,9 +118,9 @@ export default function Navbar() {
               borderColor: "var(--color-stone)",
             }}
           >
-            <ul className="flex flex-col divide-y" style={{ divideColor: "var(--color-stone)" }}>
+            <ul className="flex flex-col">
               {navLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.href} className="border-b last:border-b-0" style={{ borderColor: "var(--color-stone)" }}>
                   <Link
                     href={link.href}
                     className="block px-6 py-4 text-sm font-medium transition-colors"

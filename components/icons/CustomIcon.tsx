@@ -29,6 +29,7 @@ interface CustomIconProps {
   size?: number;
   className?: string;
   strokeWidth?: number;
+  style?: React.CSSProperties;
 }
 
 const icons: Record<IconName, React.ReactNode> = {
@@ -201,15 +202,15 @@ const icons: Record<IconName, React.ReactNode> = {
   ),
 };
 
-export default function CustomIcon({ name, size = 24, className = "", strokeWidth = 1.5 }: CustomIconProps) {
+export default function CustomIcon({ name, size = 24, className = "", strokeWidth = 1.5, style }: CustomIconProps) {
   const icon = icons[name];
   if (!icon) return null;
   return (
     <span
       className={className}
-      style={{ display: "inline-flex", width: size, height: size }}
+      style={{ display: "inline-flex", width: size, height: size, ...style }}
     >
-      {React.cloneElement(icon as React.ReactElement, {
+      {React.cloneElement(icon as React.ReactElement<React.SVGProps<SVGSVGElement>>, {
         width: size,
         height: size,
         strokeWidth,
