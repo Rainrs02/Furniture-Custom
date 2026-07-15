@@ -148,19 +148,26 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
 
         // Format pesan WA
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282113512112"; 
-        let message = `Halo Wasilah Furniture, saya ingin berkonsultasi:\n\n`;
-        message += `Nama: ${data.nama}\n`;
-        message += `Telepon: ${data.telepon}\n`;
-        message += `Email: ${data.email}\n`;
-        message += `Alamat: ${data.alamat}\n`;
-        message += `Ruangan: ${data.ruangan}\n`;
-        message += `Deskripsi: ${data.deskripsi}\n`;
-        message += `Material: ${data.material}\n`;
-        message += `Budget: ${data.budget}\n`;
-        message += `Timeline: ${data.timeline}\n`;
+        
+        let message = `Halo *Wasilah Furniture* 👋,\nSaya ingin berkonsultasi mengenai pembuatan custom furniture. Berikut adalah detail kebutuhan saya:\n\n`;
+        
+        message += `👤 *DATA DIRI*\n`;
+        message += `*Nama:* ${data.nama}\n`;
+        message += `*Telepon:* ${data.telepon}\n`;
+        message += `*Email:* ${data.email}\n`;
+        message += `*Alamat:* ${data.alamat}\n\n`;
+        
+        message += `🛋️ *DETAIL PROYEK*\n`;
+        message += `*Ruangan:* ${data.ruangan}\n`;
+        message += `*Material:* ${data.material}\n`;
+        message += `*Budget:* ${data.budget}\n`;
+        message += `*Timeline:* ${data.timeline}\n\n`;
+        
+        message += `📝 *DESKRIPSI KEBUTUHAN*\n`;
+        message += `${data.deskripsi}\n`;
         
         if (responseData.data?.fileUrl) {
-           message += `\nReferensi File: ${responseData.data.fileUrl}`;
+           message += `\n📎 *REFERENSI FOTO / FILE*\n${responseData.data.fileUrl}`;
         }
         
         const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
