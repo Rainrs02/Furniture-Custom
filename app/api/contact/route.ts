@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { google } from "googleapis";
+import { Readable } from "stream";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,20 +27,67 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // TODO: Integrasikan dengan email service (Nodemailer/Resend/EmailJS)
-    // atau simpan ke database (Prisma/Supabase/Firebase)
-    // Untuk saat ini, kita log dan kembalikan sukses
+    let fileUrl = "";
+    const referensiFoto = formData.get("referensiFoto") as File | null;
+
+    if (referensiFoto && referensiFoto.size > 0) {
+      try {
+        const auth = new google.auth.GoogleAuth({
+          credentials: {
+            client_email: process.env.GOOGLE_CLIENT_EMAIL,
+            private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+          },
+          scopes: ["https://www.googleapis.com/auth/drive"],
+        });
+
+        const drive = google.drive({ version: "v3", auth });
+        
+        const buffer = Buffer.from(await referensiFoto.arrayBuffer());
+        const stream = Readable.from(buffer);
+
+        const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+        const driveRes = await drive.files.create({
+          requestBody: {
+            name: referensiFoto.name,
+            mimeType: referensiFoto.type,
+            parents: folderId ? [folderId] : undefined,
+          },
+          media: {
+            mimeType: referensiFoto.type,
+            body: stream,
+          },
+          fields: "id, webViewLink",
+        });
+
+        const fileId = driveRes.data.id;
+        
+        if (fileId) {
+          // Jadikan file publik (Anyone with link can view)
+          await drive.permissions.create({
+            fileId,
+            requestBody: {
+              role: "reader",
+              type: "anyone",
+            },
+          });
+          
+          fileUrl = driveRes.data.webViewLink || "";
+          console.log("✅ File berhasil diunggah ke Google Drive:", fileUrl);
+        }
+      } catch (uploadError) {
+        console.error("❌ Gagal mengunggah file ke Google Drive:", uploadError);
+        // Kita tidak akan throw error, tapi fileUrl dibiarkan kosong agar data form tetap terkirim
+      }
+    }
 
     console.log("📬 Konsultasi baru diterima:", JSON.stringify(data, null, 2));
-
-    // Simulasi delay proses
-    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return NextResponse.json(
       {
         success: true,
-        message: `Terima kasih, ${data.nama}! Konsultasi Anda telah kami terima. Tim kami akan menghubungi Anda dalam 1x24 jam melalui ${data.telepon} atau ${data.email}.`,
-        data: { id: `FRC-${Date.now()}`, ...data },
+        message: `Terima kasih, ${data.nama}! Konsultasi Anda telah kami terima.`,
+        data: { id: `FRC-${Date.now()}`, fileUrl, ...data },
       },
       { status: 200 }
     );

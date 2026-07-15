@@ -143,7 +143,28 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
       });
 
       if (res.ok) {
+        const responseData = await res.json();
         set({ isSuccess: true, isSubmitting: false });
+
+        // Format pesan WA
+        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "628123456789"; 
+        let message = `Halo Wasilah Furniture, saya ingin berkonsultasi:\n\n`;
+        message += `Nama: ${data.nama}\n`;
+        message += `Telepon: ${data.telepon}\n`;
+        message += `Email: ${data.email}\n`;
+        message += `Alamat: ${data.alamat}\n`;
+        message += `Ruangan: ${data.ruangan}\n`;
+        message += `Deskripsi: ${data.deskripsi}\n`;
+        message += `Material: ${data.material}\n`;
+        message += `Budget: ${data.budget}\n`;
+        message += `Timeline: ${data.timeline}\n`;
+        
+        if (responseData.data?.fileUrl) {
+           message += `\nReferensi File: ${responseData.data.fileUrl}`;
+        }
+        
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+        window.open(waUrl, "_blank");
       } else {
         throw new Error("Gagal mengirim");
       }
