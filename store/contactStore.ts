@@ -9,7 +9,7 @@ interface ContactStore {
   sendViaWhatsApp: () => void;
 }
 
-const WHATSAPP_NUMBER = "6281234567890";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282113512112";
 
 export const useContactStore = create<ContactStore>((set, get) => ({
   isOpen: false,

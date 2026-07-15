@@ -147,7 +147,7 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         set({ isSuccess: true, isSubmitting: false });
 
         // Format pesan WA
-        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "628123456789"; 
+        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282113512112"; 
         let message = `Halo Wasilah Furniture, saya ingin berkonsultasi:\n\n`;
         message += `Nama: ${data.nama}\n`;
         message += `Telepon: ${data.telepon}\n`;
