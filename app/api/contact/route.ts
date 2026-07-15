@@ -56,6 +56,20 @@ export async function POST(req: NextRequest) {
         });
 
         console.log("✅ File berhasil diunggah ke Cloudinary:", fileUrl);
+
+        // Coba perpendek URL menggunakan TinyURL API (Gratis & tanpa API key)
+        try {
+          const tinyUrlRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(fileUrl)}`);
+          if (tinyUrlRes.ok) {
+            const shortUrl = await tinyUrlRes.text();
+            if (shortUrl && shortUrl.startsWith("http")) {
+              fileUrl = shortUrl;
+              console.log("✅ URL berhasil diperpendek:", fileUrl);
+            }
+          }
+        } catch (shortenError) {
+          console.error("⚠️ Gagal memperpendek URL (tetap menggunakan URL asli):", shortenError);
+        }
       } catch (uploadError) {
         console.error("❌ Gagal mengunggah file ke Cloudinary:", uploadError);
       }
