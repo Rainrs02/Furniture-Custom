@@ -106,9 +106,9 @@ export default function Step2Ruangan() {
             {data.referensiFoto ? data.referensiFoto.name : "Klik untuk unggah foto referensi"}
           </p>
           <p className="text-xs mt-1 opacity-60" style={{ color: "var(--color-wood)", fontFamily: "var(--font-mono)" }}>
-            JPG, PNG, WEBP, PDF hingga 5MB
+            JPG, PNG, WEBP, PDF, Video hingga 5MB
           </p>
-          <input type="file" className="hidden" accept="image/*,application/pdf" onChange={handleFileChange} />
+          <input type="file" className="hidden" accept="image/*,application/pdf,video/*" onChange={handleFileChange} />
         </label>
       </div>
 
