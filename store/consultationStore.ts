@@ -182,11 +182,15 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
         window.open(waUrl, "_blank");
       } else {
-        throw new Error("Gagal mengirim");
+        if (res.status === 413) {
+          throw new Error("Ukuran file terlalu besar untuk diproses server (batas Vercel).");
+        }
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || "Gagal mengirim. Terjadi kesalahan server.");
       }
-    } catch {
+    } catch (error) {
       set({ isSubmitting: false });
-      alert("Terjadi kesalahan. Silakan coba lagi.");
+      alert(error instanceof Error ? error.message : "Terjadi kesalahan. Silakan coba lagi.");
     }
   },
 
