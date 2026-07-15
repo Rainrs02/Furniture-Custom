@@ -38,7 +38,26 @@ export async function POST(req: NextRequest) {
     
     if (fileUrlsStr) {
       try {
-        fileUrls = JSON.parse(fileUrlsStr);
+        const parsedUrls = JSON.parse(fileUrlsStr);
+        if (Array.isArray(parsedUrls)) {
+          const shortenPromises = parsedUrls.map(async (url: string) => {
+            try {
+              const tinyUrlRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+              if (tinyUrlRes.ok) {
+                const shortUrl = await tinyUrlRes.text();
+                if (shortUrl && shortUrl.startsWith("http")) {
+                  console.log("✅ URL berhasil diperpendek:", shortUrl);
+                  return shortUrl;
+                }
+              }
+            } catch (e) {
+              console.error("⚠️ Gagal memperpendek URL:", e);
+            }
+            return url;
+          });
+          
+          fileUrls = await Promise.all(shortenPromises);
+        }
       } catch (e) {
         console.error("Gagal parse fileUrls:", e);
       }
