@@ -44,7 +44,7 @@ export default function Step4Konfirmasi() {
         <SummaryRow label="Alamat" value={data.alamat} />
         <SummaryRow label="Ruangan" value={data.ruangan} />
         <SummaryRow label="Kebutuhan" value={data.deskripsi} />
-        <SummaryRow label="Foto" value={data.referensiFoto ? data.referensiFoto.name : "-"} />
+        <SummaryRow label="Foto" value={Array.isArray(data.referensiFoto) && data.referensiFoto.length > 0 ? data.referensiFoto.map(f => f.name).join(', ') : "-"} />
         <SummaryRow label="Material" value={data.material} />
         <SummaryRow label="Budget" value={data.budget} />
         <SummaryRow label="Timeline" value={data.timeline} />
