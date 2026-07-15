@@ -30,6 +30,14 @@ export async function POST(req: NextRequest) {
     let fileUrl = "";
     const referensiFoto = formData.get("referensiFoto") as File | null;
 
+    // Log status file yang diterima
+    console.log("📁 File diterima:", {
+      ada: !!referensiFoto,
+      nama: referensiFoto?.name,
+      ukuran: referensiFoto?.size,
+      tipe: referensiFoto?.type,
+    });
+
     if (referensiFoto && referensiFoto.size > 0) {
       try {
         let privateKey = process.env.GOOGLE_PRIVATE_KEY || "";
@@ -82,19 +90,27 @@ export async function POST(req: NextRequest) {
           fileUrl = driveRes.data.webViewLink || "";
           console.log("✅ File berhasil diunggah ke Google Drive:", fileUrl);
         }
-      } catch (uploadError) {
-        console.error("❌ Gagal mengunggah file ke Google Drive:", uploadError);
+      } catch (uploadError: unknown) {
+        const errMsg = uploadError instanceof Error ? uploadError.message : String(uploadError);
+        const errStack = uploadError instanceof Error ? uploadError.stack : "";
+        console.error("❌ Gagal mengunggah file ke Google Drive:");
+        console.error("Message:", errMsg);
+        console.error("Stack:", errStack);
         // Kita tidak akan throw error, tapi fileUrl dibiarkan kosong agar data form tetap terkirim
       }
     }
 
     console.log("📬 Konsultasi baru diterima:", JSON.stringify(data, null, 2));
 
+    console.log("📤 Response fileUrl:", fileUrl || "(kosong - tidak ada file atau upload gagal)");
+
     return NextResponse.json(
       {
         success: true,
         message: `Terima kasih, ${data.nama}! Konsultasi Anda telah kami terima.`,
         data: { id: `FRC-${Date.now()}`, fileUrl, ...data },
+        debug_file_received: !!referensiFoto && referensiFoto.size > 0,
+        debug_file_name: referensiFoto?.name || null,
       },
       { status: 200 }
     );
