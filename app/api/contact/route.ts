@@ -33,45 +33,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let fileUrl = "";
-    const referensiFoto = formData.get("referensiFoto") as File | null;
+    let fileUrl = formData.get("fileUrl") as string || "";
 
-    if (referensiFoto && referensiFoto.size > 0) {
+    if (fileUrl) {
+      // Coba perpendek URL menggunakan TinyURL API (Gratis & tanpa API key)
       try {
-        const buffer = Buffer.from(await referensiFoto.arrayBuffer());
-
-        // Upload ke Cloudinary
-        fileUrl = await new Promise<string>((resolve, reject) => {
-          const uploadStream = cloudinary.uploader.upload_stream(
-            {
-              folder: "wasilah-furniture",
-              resource_type: "auto", // Penting untuk support gambar dan PDF
-            },
-            (error, result) => {
-              if (error || !result) return reject(error);
-              resolve(result.secure_url);
-            }
-          );
-          uploadStream.end(buffer);
-        });
-
-        console.log("✅ File berhasil diunggah ke Cloudinary:", fileUrl);
-
-        // Coba perpendek URL menggunakan TinyURL API (Gratis & tanpa API key)
-        try {
-          const tinyUrlRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(fileUrl)}`);
-          if (tinyUrlRes.ok) {
-            const shortUrl = await tinyUrlRes.text();
-            if (shortUrl && shortUrl.startsWith("http")) {
-              fileUrl = shortUrl;
-              console.log("✅ URL berhasil diperpendek:", fileUrl);
-            }
+        const tinyUrlRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(fileUrl)}`);
+        if (tinyUrlRes.ok) {
+          const shortUrl = await tinyUrlRes.text();
+          if (shortUrl && shortUrl.startsWith("http")) {
+            fileUrl = shortUrl;
+            console.log("✅ URL berhasil diperpendek:", fileUrl);
           }
-        } catch (shortenError) {
-          console.error("⚠️ Gagal memperpendek URL (tetap menggunakan URL asli):", shortenError);
         }
-      } catch (uploadError) {
-        console.error("❌ Gagal mengunggah file ke Cloudinary:", uploadError);
+      } catch (shortenError) {
+        console.error("⚠️ Gagal memperpendek URL (tetap menggunakan URL asli):", shortenError);
       }
     }
 

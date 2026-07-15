@@ -128,14 +128,44 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
     set({ isSubmitting: true });
 
     try {
+      let uploadedFileUrl = "";
+
+      if (data.referensiFoto) {
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+        if (!cloudName || !uploadPreset) {
+          throw new Error("Konfigurasi Cloudinary tidak lengkap di browser.");
+        }
+
+        const uploadData = new FormData();
+        uploadData.append("file", data.referensiFoto);
+        uploadData.append("upload_preset", uploadPreset);
+        uploadData.append("folder", "wasilah-furniture");
+
+        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+          method: "POST",
+          body: uploadData,
+        });
+
+        if (!cloudRes.ok) {
+          throw new Error("Gagal mengunggah file ke Cloudinary.");
+        }
+
+        const cloudData = await cloudRes.json();
+        uploadedFileUrl = cloudData.secure_url;
+      }
+
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (value instanceof File) {
-          formData.append(key, value);
-        } else if (value !== null && value !== undefined) {
+        if (key !== "referensiFoto" && value !== null && value !== undefined) {
           formData.append(key, String(value));
         }
       });
+
+      if (uploadedFileUrl) {
+        formData.append("fileUrl", uploadedFileUrl);
+      }
 
       const res = await fetch("/api/contact", {
         method: "POST",
