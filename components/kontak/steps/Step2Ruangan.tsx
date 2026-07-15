@@ -18,10 +18,24 @@ const rooms = [
 ];
 
 export default function Step2Ruangan() {
-  const { data, errors, updateField, nextStep, prevStep } = useConsultationStore();
+  const { data, errors, updateField, setError, clearError, nextStep, prevStep } = useConsultationStore();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
+    
+    if (file) {
+      const isVideo = file.type.startsWith('video/');
+      const maxSize = isVideo ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+      
+      if (file.size > maxSize) {
+        setError("referensiFoto", `Ukuran file terlalu besar. Maks. ${isVideo ? '20MB untuk Video' : '5MB untuk Foto/PDF'}.`);
+        e.target.value = ''; // Reset input
+        updateField("referensiFoto", null);
+        return;
+      }
+      clearError("referensiFoto");
+    }
+
     updateField("referensiFoto", file);
   };
 
@@ -105,11 +119,12 @@ export default function Step2Ruangan() {
           <p className="text-sm font-medium" style={{ color: "var(--color-wood)", fontFamily: "var(--font-inter)" }}>
             {data.referensiFoto ? data.referensiFoto.name : "Klik untuk unggah foto referensi"}
           </p>
-          <p className="text-xs mt-1 opacity-60" style={{ color: "var(--color-wood)", fontFamily: "var(--font-mono)" }}>
-            JPG, PNG, WEBP, PDF, Video hingga 5MB
+          <p className="text-xs mt-1 opacity-60 text-center" style={{ color: "var(--color-wood)", fontFamily: "var(--font-mono)" }}>
+            Foto/PDF (Maks 5MB) &bull; Video (Maks 20MB)
           </p>
           <input type="file" className="hidden" accept="image/*,application/pdf,video/*" onChange={handleFileChange} />
         </label>
+        {errors.referensiFoto && <p className="text-xs mt-2" style={{ color: "#e53e3e", fontFamily: "var(--font-inter)" }}>{errors.referensiFoto}</p>}
       </div>
 
       <div className="flex justify-between">
