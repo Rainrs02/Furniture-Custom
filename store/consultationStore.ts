@@ -149,25 +149,34 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         // Format pesan WA
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282113512112"; 
         
-        let message = `Halo *Wasilah Furniture* \\u{1F44B},\nSaya ingin berkonsultasi mengenai pembuatan custom furniture. Berikut adalah detail kebutuhan saya:\n\n`;
+        let message = `Halo *Wasilah Furniture*,\nSaya ingin berkonsultasi mengenai pembuatan custom furniture. Berikut adalah detail kebutuhan saya:\n\n`;
         
-        message += `\\u{1F464} *DATA DIRI*\n`;
+        message += `-----------------------------------\n`;
+        message += `*DATA DIRI*\n`;
+        message += `-----------------------------------\n`;
         message += `*Nama:* ${data.nama}\n`;
         message += `*Telepon:* ${data.telepon}\n`;
         message += `*Email:* ${data.email}\n`;
         message += `*Alamat:* ${data.alamat}\n\n`;
         
-        message += `\\u{1F6CB}\\u{FE0F} *DETAIL PROYEK*\n`;
+        message += `-----------------------------------\n`;
+        message += `*DETAIL PROYEK*\n`;
+        message += `-----------------------------------\n`;
         message += `*Ruangan:* ${data.ruangan}\n`;
         message += `*Material:* ${data.material}\n`;
         message += `*Budget:* ${data.budget}\n`;
         message += `*Timeline:* ${data.timeline}\n\n`;
         
-        message += `\\u{1F4DD} *DESKRIPSI KEBUTUHAN*\n`;
+        message += `-----------------------------------\n`;
+        message += `*DESKRIPSI KEBUTUHAN*\n`;
+        message += `-----------------------------------\n`;
         message += `${data.deskripsi}\n`;
         
         if (responseData.data?.fileUrl) {
-           message += `\n\\u{1F4CE} *REFERENSI FOTO / FILE*\n${responseData.data.fileUrl}`;
+           message += `\n-----------------------------------\n`;
+           message += `*REFERENSI FOTO / FILE*\n`;
+           message += `-----------------------------------\n`;
+           message += `${responseData.data.fileUrl}`;
         }
         
         const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
