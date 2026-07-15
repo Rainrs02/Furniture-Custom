@@ -6,7 +6,7 @@ import { CheckCircle, ArrowRight } from "lucide-react";
 import { useConsultationStore } from "@/store/consultationStore";
 
 export default function SuccessMessage() {
-  const { data, reset } = useConsultationStore();
+  const { data, reset, waUrl } = useConsultationStore();
 
   return (
     <motion.div
@@ -49,11 +49,28 @@ export default function SuccessMessage() {
       </div>
 
       <p
-        className="text-sm mb-10 opacity-60"
+        className="text-sm mb-4 opacity-60"
         style={{ color: "var(--color-wood)", fontFamily: "var(--font-inter)" }}
       >
         Estimasi respons: 1×24 jam pada hari kerja
       </p>
+
+      {waUrl && (
+        <div className="mb-10 p-4 rounded-sm" style={{ backgroundColor: "rgba(37, 211, 102, 0.1)", border: "1px dashed #25D366" }}>
+          <p className="text-sm mb-3 font-medium" style={{ color: "var(--color-wood)", fontFamily: "var(--font-inter)" }}>
+            Jika WhatsApp tidak otomatis terbuka, klik tombol di bawah ini:
+          </p>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-sm transition-all text-white"
+            style={{ backgroundColor: "#25D366", fontFamily: "var(--font-mono)" }}
+          >
+            Buka WhatsApp
+          </a>
+        </div>
+      )}
 
       <div className="flex flex-wrap justify-center gap-4">
         <button onClick={reset} className="btn-secondary">

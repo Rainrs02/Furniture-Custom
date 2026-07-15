@@ -26,6 +26,7 @@ interface ConsultationStore {
   errors: Partial<Record<keyof ConsultationData, string>>;
   isSubmitting: boolean;
   isSuccess: boolean;
+  waUrl: string;
 
   setStep: (step: ConsultationStep) => void;
   nextStep: () => void;
@@ -57,6 +58,7 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
   errors: {},
   isSubmitting: false,
   isSuccess: false,
+  waUrl: "",
 
   setStep: (step) => set({ currentStep: step }),
 
@@ -174,7 +176,6 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
 
       if (res.ok) {
         const responseData = await res.json();
-        set({ isSuccess: true, isSubmitting: false });
 
         // Format pesan WA
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282113512112"; 
@@ -210,6 +211,7 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         }
         
         const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+        set({ isSuccess: true, isSubmitting: false, waUrl });
         window.open(waUrl, "_blank");
       } else {
         if (res.status === 413) {
