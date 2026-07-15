@@ -12,7 +12,7 @@ export interface ConsultationData {
   // Step 2 – Ruangan & Kebutuhan
   ruangan: string;
   deskripsi: string;
-  referensiFoto: File | null;
+  referensiFoto: File[];
 
   // Step 3 – Detail Proyek
   material: string;
@@ -46,7 +46,7 @@ const initialData: ConsultationData = {
   telepon: "",
   ruangan: "",
   deskripsi: "",
-  referensiFoto: null,
+  referensiFoto: [],
   material: "",
   budget: "",
   timeline: "",
@@ -130,9 +130,9 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
     set({ isSubmitting: true });
 
     try {
-      let uploadedFileUrl = "";
+      let uploadedFileUrls: string[] = [];
 
-      if (data.referensiFoto) {
+      if (data.referensiFoto && data.referensiFoto.length > 0) {
         const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
         const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
@@ -140,22 +140,26 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
           throw new Error("Konfigurasi Cloudinary tidak lengkap di browser.");
         }
 
-        const uploadData = new FormData();
-        uploadData.append("file", data.referensiFoto);
-        uploadData.append("upload_preset", uploadPreset);
-        uploadData.append("folder", "wasilah-furniture");
+        const uploadPromises = data.referensiFoto.map(async (file) => {
+          const uploadData = new FormData();
+          uploadData.append("file", file);
+          uploadData.append("upload_preset", uploadPreset);
+          uploadData.append("folder", "wasilah-furniture");
 
-        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-          method: "POST",
-          body: uploadData,
+          const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+            method: "POST",
+            body: uploadData,
+          });
+
+          if (!cloudRes.ok) {
+            throw new Error("Gagal mengunggah salah satu file ke Cloudinary.");
+          }
+
+          const cloudData = await cloudRes.json();
+          return cloudData.secure_url;
         });
 
-        if (!cloudRes.ok) {
-          throw new Error("Gagal mengunggah file ke Cloudinary.");
-        }
-
-        const cloudData = await cloudRes.json();
-        uploadedFileUrl = cloudData.secure_url;
+        uploadedFileUrls = await Promise.all(uploadPromises);
       }
 
       const formData = new FormData();
@@ -165,8 +169,8 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         }
       });
 
-      if (uploadedFileUrl) {
-        formData.append("fileUrl", uploadedFileUrl);
+      if (uploadedFileUrls.length > 0) {
+        formData.append("fileUrls", JSON.stringify(uploadedFileUrls));
       }
 
       const res = await fetch("/api/contact", {
@@ -203,11 +207,14 @@ export const useConsultationStore = create<ConsultationStore>((set, get) => ({
         message += `-----------------------------------\n`;
         message += `${data.deskripsi}\n`;
         
-        if (responseData.data?.fileUrl) {
+        if (responseData.data?.fileUrls && responseData.data.fileUrls.length > 0) {
            message += `\n-----------------------------------\n`;
            message += `*REFERENSI FOTO / FILE*\n`;
            message += `-----------------------------------\n`;
-           message += `${responseData.data.fileUrl}`;
+           const fileUrls: string[] = responseData.data.fileUrls;
+           fileUrls.forEach((url, index) => {
+             message += `${index + 1}. ${url}\n`;
+           });
         }
         
         const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;

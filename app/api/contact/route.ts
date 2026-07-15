@@ -33,21 +33,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let fileUrl = formData.get("fileUrl") as string || "";
-
-    if (fileUrl) {
-      // Coba perpendek URL menggunakan TinyURL API (Gratis & tanpa API key)
+    let fileUrls: string[] = [];
+    const fileUrlsStr = formData.get("fileUrls") as string;
+    
+    if (fileUrlsStr) {
       try {
-        const tinyUrlRes = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(fileUrl)}`);
-        if (tinyUrlRes.ok) {
-          const shortUrl = await tinyUrlRes.text();
-          if (shortUrl && shortUrl.startsWith("http")) {
-            fileUrl = shortUrl;
-            console.log("✅ URL berhasil diperpendek:", fileUrl);
-          }
-        }
-      } catch (shortenError) {
-        console.error("⚠️ Gagal memperpendek URL (tetap menggunakan URL asli):", shortenError);
+        fileUrls = JSON.parse(fileUrlsStr);
+      } catch (e) {
+        console.error("Gagal parse fileUrls:", e);
       }
     }
 
@@ -57,7 +50,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: `Terima kasih, ${data.nama}! Konsultasi Anda telah kami terima.`,
-        data: { id: `FRC-${Date.now()}`, fileUrl, ...data },
+        data: { id: `FRC-${Date.now()}`, fileUrls, ...data },
       },
       { status: 200 }
     );
